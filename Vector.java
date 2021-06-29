@@ -1,33 +1,39 @@
-public class Vector<T>
+public class Vector
 {
-    private Object[] arr;
+    private long[] arr;
     private int count;
     private int capacity;
 
     public Vector()
     {
-        arr = new Object[8];
-        count = 0;
-        capacity = 8;
+        this(0, 0);
     }
 
-    public Vector(int count, T fill)
+    public Vector(int count)
+    {
+        this(count, 0);
+    }
+
+    public Vector(int count, long fill)
     {
         if(count < 0) throw new VectorIndexOutOfBoundsException("Vector index out of range");
-        capacity = (int)Math.pow(2, (int)(Math.log(count) / Math.log(2)) + 1);
+
+        if(count > 0) capacity = (int)Math.pow(2, (int)(Math.log(count) / Math.log(2)) + 1);
+        else capacity = 8;
+
         if(capacity < 8) capacity = 8;
-        arr = new Object[capacity];
+        arr = new long[capacity];
         this.count = count;
         for(int i = 0; i < count; i++) arr[i] = fill;
     }
 
-    public T at(int index)
+    public long at(int index)
     {
         if(index >= count || index < 0) throw new VectorIndexOutOfBoundsException("Vector index out of range");
-        return (T)arr[index];
+        return (long)arr[index];
     }
 
-    public void add(T element, int index)
+    public void add(int index, long element)
     {
         if(index < 0 || index > count) throw new VectorIndexOutOfBoundsException("Vector index out of range");
         if(count == capacity) resizeUp();
@@ -36,29 +42,31 @@ public class Vector<T>
         count++;
     }
 
-    public void add(T element)
+    public void add(long element)
     {
-        add(element, count);
+        add(count, element);
     }
 
-    public T remove(int index)
+    public long remove(int index)
     {
         if(index < 0 || index >= count) throw new VectorIndexOutOfBoundsException("Vector index out of range");
+
         for(int i = index; i < count - 1; i++) arr[i] = arr[i + 1];
         count--;
         if(capacity > 8 && count <= capacity / 4) resizeDown();
-        return (T)arr[index];
+        return (long)arr[index];
     }
 
-    public T replace(T element, int index)
+    public long replace(int index, long element)
     {
         if(index < 0 || index >= count) throw new VectorIndexOutOfBoundsException("Vector index out of range");
-        T tmp = (T)arr[index];
+
+        long tmp = (long)arr[index];
         arr[index] = element;
         return tmp;
     }
 
-    public T remove()
+    public long remove()
     {
         return remove(count - 1);
     }
@@ -78,9 +86,18 @@ public class Vector<T>
         return count == 0;
     }
 
+    @Override
+    public String toString()
+    {
+        String str = "[";
+        for(int i = 0; i < count - 1; i++) str += arr[i] + ", ";
+        str += arr[count - 1] + "]";
+        return str;
+    }
+
     private void resizeUp()
     {
-        Object[] newArr = new Object[capacity * 2];
+        long[] newArr = new long[capacity * 2];
         for(int i = 0; i < count; i++) newArr[i] = arr[i];
         capacity *= 2;
         arr = newArr;
@@ -88,7 +105,7 @@ public class Vector<T>
 
     private void resizeDown()
     {
-        Object[] newArr = new Object[capacity / 2];
+        long[] newArr = new long[capacity / 2];
         for(int i = 0; i < count; i++) newArr[i] = arr[i];
         capacity /= 2;
         arr = newArr;
